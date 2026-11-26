@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Kampusync — One Campus, Connected Academics
 
-## Getting Started
+Sistem Informasi Manajemen Akademik Terintegrasi berbasis **Next.js App Router + JavaScript + PostgreSQL (`pg` raw SQL, tanpa ORM) + Tailwind CSS**.
 
-First, run the development server:
+## Fitur Utama (MVP)
+- **Autentikasi & RBAC Server-Side**: Login via Email / NIM / NIDN, sesi cookie bertanda tangan HMAC-SHA256, pemeriksaan peran dan kepemilikan data di server (`ADMIN`, `LECTURER`, `STUDENT`).
+- **Admin Akademik**: Manajemen Fakultas, Program Studi, Mahasiswa (+ akun & Dosen Wali), Dosen, Mata Kuliah (+ prasyarat), Periode Akademik, Kelas Perkuliahan, Jadwal dengan deteksi bentrok otomatis, Kebijakan Akademik, Laporan & Ekspor CSV.
+- **Mahasiswa**: Beranda ringkas, pengisian KRS dengan validasi prasyarat/bentrok/kapasitas/batas SKS, Jadwal Kuliah (daftar & kalender mingguan), Presensi QR/Kode, Nilai diterbitkan, KHS (IPS/IPK + cetak PDF), Kalender Akademik, dan Pengumuman.
+- **Dosen & Dosen Wali**: Beranda mengajar, Kelas Saya, Jadwal Mengajar, Presensi Manual & QR Code, Pengelolaan Komponen/Bobot/Nilai & Publikasi (dengan log audit pasca-publikasi), serta Persetujuan/Penolakan KRS mahasiswa bimbingan.
 
+## Menjalankan Proyek
+
+### 1. Siapkan PostgreSQL Lokal
+Buat database `kampusync` di PostgreSQL lokal (misalnya melalui pgAdmin), lalu salin `.env.example` ke `.env.local` dan sesuaikan `DATABASE_URL` dengan username dan password PostgreSQL Anda.
+
+### 2. Jalankan Migrasi & Seed Data Demo
+Anda dapat menjalankan skrip migrasi & seed lewat terminal:
+```bash
+npm run db:migrate
+npm run db:seed
+```
+*(Alternatif: jalankan file `db/pgadmin_setup.sql` langsung melalui Query Tool di pgAdmin).*
+
+### 3. Jalankan Aplikasi
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+Buka [http://localhost:3000](http://localhost:3000).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Akun Demo Sintetis (Password: `Kampusync123!`)
+- **Admin Akademik**: `admin@kampusync.ac.id`
+- **Dosen & Dosen Wali**: `ahmad.fauzi@kampusync.ac.id`
+- **Mahasiswa**: `2024101001` (`nadia.putri@student.kampusync.ac.id`)
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Verifikasi Kode
+```bash
+npm test
+npm run lint
+npm run build
+```
