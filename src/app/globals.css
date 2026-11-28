@@ -1,26 +1,299 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-primary: #2457A6;
+  --color-primary-dark: #183F7A;
+  --color-background: #F6F8FB;
+  --color-surface: #FFFFFF;
+  --color-text-primary: #172033;
+  --color-text-secondary: #64748B;
+  --color-border: #E2E8F0;
+  --color-success: #16803D;
+  --color-warning: #B7791F;
+  --color-danger: #C53030;
+  --color-info: #2563EB;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--color-primary);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-foreground: var(--color-text-primary);
+  --color-muted-foreground: var(--color-text-secondary);
+  --color-border: var(--color-border);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-danger: var(--color-danger);
+  --color-info: var(--color-info);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html,
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+
+/* Interaction affordance: pointer cursor on interactive controls, not-allowed when disabled */
+:where(
+  button:not(:disabled):not([aria-disabled="true"]),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href],
+  summary,
+  select:not(:disabled),
+  label[for],
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled)
+) {
+  cursor: pointer;
+}
+
+:where(button:disabled, select:disabled, input:disabled, textarea:disabled, [aria-disabled="true"]) {
+  cursor: not-allowed;
+}
+
+/* Visible focus rings for keyboard accessibility */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Subtle page entrance when navigating routes */
+.portal-page-enter {
+  animation: portalFadeIn 180ms ease-out both;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .portal-page-enter {
+    animation: portalFadeSlideIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes portalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes portalFadeSlideIn {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* Alert entry animation using @starting-style */
+.alert-reveal {
+  opacity: 1;
+  transition: opacity 180ms ease-out, translate 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@starting-style {
+  .alert-reveal {
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .alert-reveal {
+      translate: 0 -4px;
+    }
+  }
+}
+
+/* Interactive tile lift (myITS-inspired calm elevation) */
+.interactive-tile {
+  transition:
+    background-color 150ms ease-out,
+    border-color 150ms ease-out,
+    box-shadow 180ms ease-out,
+    translate 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    scale 120ms ease-out;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .interactive-tile:hover {
+    translate: 0 -2px;
+  }
+  .interactive-tile:active {
+    scale: 0.99;
+  }
+}
+
+/* Header dropdown / popover micro-reveal */
+.kampus-popover {
+  transform-origin: top right;
+  opacity: 1;
+  transition: opacity 160ms ease-out, scale 180ms cubic-bezier(0.22, 1, 0.36, 1), translate 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@starting-style {
+  .kampus-popover {
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .kampus-popover {
+      scale: 0.96;
+      translate: 0 -4px;
+    }
+  }
+}
+
+/* Native top-layer <dialog> modal animations with discrete display & fallback */
+.kampus-dialog {
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100dvh - 2rem);
+  overflow: visible;
+  opacity: 0;
+  transition-property: opacity, transform, display, overlay;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  transition-behavior: allow-discrete;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .kampus-dialog {
+    transform: scale(0.96) translateY(6px);
+  }
+}
+
+:is(.kampus-dialog[open]):where(:not([data-closing])) {
+  opacity: 1;
+}
+
+@starting-style {
+  :is(.kampus-dialog[open]):where(:not([data-closing])) {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(.kampus-dialog[open]):where(:not([data-closing])) {
+    transform: scale(1) translateY(0);
+  }
+  @starting-style {
+    :is(.kampus-dialog[open]):where(:not([data-closing])) {
+      transform: scale(0.96) translateY(6px);
+    }
+  }
+}
+
+.kampus-dialog::backdrop {
+  background-color: rgba(15, 23, 42, 0);
+  transition-property: background-color, display, overlay;
+  transition-duration: 200ms;
+  transition-timing-function: ease-out;
+  transition-behavior: allow-discrete;
+}
+
+:is(.kampus-dialog[open]):where(:not([data-closing]))::backdrop {
+  background-color: rgba(15, 23, 42, 0.45);
+}
+
+@starting-style {
+  :is(.kampus-dialog[open]):where(:not([data-closing]))::backdrop {
+    background-color: rgba(15, 23, 42, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kampus-dialog,
+  .kampus-dialog::backdrop {
+    transition-duration: 100ms;
+  }
+}
+
+/* Native top-layer <dialog> mobile navigation drawer */
+.kampus-drawer {
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  width: min(18rem, 85vw);
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  background: transparent;
+  overflow: hidden;
+  opacity: 0;
+  transition-property: opacity, translate, display, overlay;
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  transition-behavior: allow-discrete;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .kampus-drawer {
+    translate: -100% 0;
+  }
+}
+
+:is(.kampus-drawer[open]):where(:not([data-closing])) {
+  opacity: 1;
+}
+
+@starting-style {
+  :is(.kampus-drawer[open]):where(:not([data-closing])) {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(.kampus-drawer[open]):where(:not([data-closing])) {
+    translate: 0 0;
+  }
+  @starting-style {
+    :is(.kampus-drawer[open]):where(:not([data-closing])) {
+      translate: -100% 0;
+    }
+  }
+}
+
+.kampus-drawer::backdrop {
+  background-color: rgba(15, 23, 42, 0);
+  transition-property: background-color, display, overlay;
+  transition-duration: 220ms;
+  transition-timing-function: ease-out;
+  transition-behavior: allow-discrete;
+}
+
+:is(.kampus-drawer[open]):where(:not([data-closing]))::backdrop {
+  background-color: rgba(15, 23, 42, 0.45);
+}
+
+@starting-style {
+  :is(.kampus-drawer[open]):where(:not([data-closing]))::backdrop {
+    background-color: rgba(15, 23, 42, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kampus-drawer,
+  .kampus-drawer::backdrop {
+    transition-duration: 100ms;
+  }
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
 }
